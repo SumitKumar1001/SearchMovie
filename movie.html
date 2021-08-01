@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <style>
+        body {
+
+            color: white;
+            font-family: sans-serif;
+            background-image: url('https://img.freepik.com/free-vector/open-clapper-board-with-film-strip-background-design_1017-26102.jpg?size=626&ext=jpg');
+        }
+        #name {
+            width: 50%;
+            height: 40px;
+        }
+        button {
+            width: 160px;
+            height: 30px;
+            font-size: 25px;
+            font-weight: bold;
+            border: none;
+            margin-top: 5px;
+        }
+        .search {
+
+            text-align: center;
+            margin-bottom: 5%;
+        }
+        #result {
+            display: flex;
+            justify-content: center;
+        }
+        .main {
+            width: 510px;
+            text-align: center;
+            background-color: black;
+            margin-left: 2%;
+            line-height: 4;
+            font-family: cursive;
+            border-radius: 75px;
+        }
+        span {
+            font-size: 20px;
+            font-weight: 950;
+        }
+        .title {
+            font-size: 75px;
+            font-weight: 950;
+            letter-spacing: 6px;
+            line-height: 3;
+        }
+        #err {
+            display: none;
+            margin-left: 30%;
+        }
+        .tag {
+            height: 125px;
+        }
+        #end {
+            text-align: center;
+            margin-top: 3%;
+        }
+        .end {
+            background-color: black;
+            background-color: #4526262e;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search">
+        <h1>Enter Movie Name</h1>
+        <div><input type="text" name="" id="name"></div>
+        <div class="btn"><button onclick="movie()">Search</button></div>
+    </div>
+    <div id="err">
+        <img src="https://media3.giphy.com/media/JR5gt4Ju9gswpwkuRY/giphy.gif?cid=ecf05e47ezxes1jr08awwce5pll9dfetf8hhleid5ua1mt4y&rid=giphy.gif&ct=g" alt="">
+    </div>
+    <div id="result">
+        <div id="child"></div>
+    </div>
+    <div id="end"></div>
+</body>
+</html>
+<script>
+    let result = document.getElementById("result");
+    let child = document.getElementById("child");
+    let err = document.getElementById("err");
+    let end = document.getElementById("end");
+    async function movie() {
+        result.innerHTML = null
+        end.innerHTML = null
+        let name = document.getElementById('name').value
+        try {
+            let res = await fetch(`http://www.omdbapi.com/?apikey=535091d4&t=${name}`)
+            let data = await res.json();
+            //Poster
+            div_image = document.createElement('div')
+            image = document.createElement('img')
+            image.src = data.Poster
+            div_image.append(image)
+            //Title
+            let div_title = document.createElement('div')
+            div_title.innerHTML = data.Title
+            div_title.setAttribute('class', 'title')
+            //Actors
+            let div = document.createElement('div')
+            div.innerHTML = `<span>Actors</span>:${data.Actors}`
+            div.setAttribute('class', 'author')
+            //ReleaseDate
+            div_r = document.createElement('div')
+            div_r.innerHTML = `<span>Released Date</span>:${data.Released}`
+            div_r.setAttribute('class', 'rel')
+            //IMDB
+            div_imdb = document.createElement('div')
+            div_imdb.innerHTML = `<span>IMDB</span>:${data.imdbRating}`
+            div_imdb.setAttribute('class', 'imdb')
+            //Watch
+            btn = document.createElement('button')
+            btn.innerHTML = 'WATCH'
+            btn.setAttribute('class', 'last')
+            let div_main = document.createElement('div')
+            div_main.append(div_title, div, div_r, div_imdb)
+            div_main.setAttribute('class', 'main')
+            result.append(div_image, div_main)
+            end.append(btn)
+            if (data.Title == undefined) {
+                result.style.display = 'none';
+
+                err.style.display = 'block';
+                end.style.display = 'none';
+
+            }
+            else {
+                result.style.display = 'flex';
+                err.style.display = 'none';
+                end.style.display = 'block';
+            }
+            if (Number(data.imdbRating) > 8.5) {
+                tag = document.createElement('img')
+                tag.src = 'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX1449007.jpg'
+                tag.setAttribute('class', 'tag')
+                result.append(tag)
+            }
+        }
+        catch (err) {
+            result.innerHTML = null
+        }
+    }
+</script>
